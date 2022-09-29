@@ -20,3 +20,6 @@ inst = rm.open_resource(hardCodedResource)
 query = "ACQuire?"
 print(inst.query(query))
 
+
+# inst.write(command) to send commands
+# inst.query(query) to query settings and stuff

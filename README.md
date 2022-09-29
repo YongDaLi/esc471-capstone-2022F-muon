@@ -48,3 +48,8 @@ print(inst.query(query))
 ## more reading
 The oscilloscope communication is based on IEEE488.2. You can read the manual for the full description of all commands.
 - programming manual: https://www.tek.com/en/manual/oscilloscope/3-series-mixed-domain-oscilloscope-programmer-manual-3-series-mdo
+
+
+## what the old code does
+1. query current acquisition status, if error or stop handle it
+2. get the waveform of the current status
