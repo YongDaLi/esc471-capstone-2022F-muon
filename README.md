@@ -6,7 +6,7 @@ This describes how to interface with the oscilloscope.
 
 
 ## Fancy new hardware
-- Tektronix 3-seris mixed domain oscilloscope
+- Tektronix 3-series mixed domain oscilloscope
 - "MDO34" = 200HMz, 2.5GS/s
 - https://www.tek.com/en/products/oscilloscopes/3-series-mdo
 - it's got a touchscreen, so you've got to look at both the touchscreen and right-side physical buttons when looking for a function
