@@ -35,17 +35,19 @@ def log(x):
         print(x)
 
 
-def wouldDecay(sc,t):
+def wouldDecay(sc, t, window):
     #Given a scintillator data sc and a peak at time point t, check that this peak is a muon entering a scintillator where it then immediately decayed
     if t==len(sc)-1:
         return False
-    return ((sc[t+1] - sc[t]) <= decayWindow)
+    return ((sc[t+1] - sc[t]) <= window)
 
 
 
-def isDecay(sc, t):
+def isDecay(sc, t, window):
     #Given a scintillator data sc and a peak at time point t, check that this peak is a muon decaying in this scintillator
-    return ((sc[t] - sc[t-1]) <= decayWindow)
+    if t==0:
+        return False
+    return ((sc[t] - sc[t-1]) <= window)
 
 
 
@@ -68,7 +70,7 @@ def decayedDown(S2, S3, t):
     for i in range(len(S3)):
         if S3[i] < S2[t]:
             continue
-        if (S3[i]-S2[t]) < S2ToElectronPeakWindow:
+        if (S3[i]-S2[t]) < S2ToElectronPeakWindow and (S3[i]-S2[t]) > decayWindow/3:  # note that decayWindow is a upper threshold, but there we want a lower threshold. Use /3 as extimate.
             return True
     return False
 
@@ -76,7 +78,7 @@ def decayedDown(S2, S3, t):
 def decayedUp(S2, t):
     # Check if the muon entering S2 at t later decayed and emitted the electron up back into S2
     for i in range(t+1, len(S2)):
-        if (S2[i]-S2[t]) < S2ToElectronPeakWindow:
+        if (S2[i]-S2[t]) < S2ToElectronPeakWindow and (S2[i]-S2[t]) > decayWindow/3:
             return True
     return False
     
@@ -85,7 +87,7 @@ def countEvents(S1,S2,S3):
     down = 0
     for i in range(0, len(S1), 1):
         # exclude muons that decayed in S1
-        if (wouldDecay(S1, i)) or (isDecay(S1, i) and (i!=0)):
+        if wouldDecay(S1, i, decayWindow) or isDecay(S1, i, decayWindow):
             # TODO: better logging for more than one log item
             log(S1[i])
             log(" is omitted\n")
@@ -93,18 +95,22 @@ def countEvents(S1,S2,S3):
 
         # exclude muons that didn't enter S2
         S2EntryPeak = []
+        #log(enteredS2(S1, S2, i, S2EntryPeak))
         if not enteredS2(S1, S2, i, S2EntryPeak):
             log(S1[i])
             log(" is omitted\n")
             continue
 
         # exclude muons that decayed in S2
-        if wouldDecay(S2, S2EntryPeak[0]):
+        log(S2EntryPeak)
+        log(wouldDecay(S2, S2EntryPeak[0], decayWindow/3))
+        if wouldDecay(S2, S2EntryPeak[0], decayWindow/3):
             log(S1[i])
             log(" is omitted\n")
             continue
 
-        # At this point we have muons that passed through S1 and S2 and ready to decay in the aluminium plate. 
+        # At this point we have muons that passed through S1 and S2 and ready to decay in the aluminium plate.
+        log("reached Al plate") 
         if decayedDown(S2, S3, S2EntryPeak[0]):
             log(S1[i])
             log(" is ready to decay down")
@@ -119,7 +125,10 @@ def countEvents(S1,S2,S3):
 
 if __name__ == "__main__":
     # very premature test, expect 2 up and 1 down
-    S1 = np.array([0.3, 1.5, 10.7, 30, 70, 100, 103, 144])
-    S2 = np.array([13.2, 33, 39, 73, 77, 147, 156])
-    S3 = np.array([19.8, 51, 53, 78])
+    #S1 = np.array([0.3, 1.5, 10.7, 30, 70, 100, 103, 144])
+    #S2 = np.array([13.2, 33, 39, 73, 77, 147, 156])
+    #S3 = np.array([19.8, 51, 53, 78])
+    S1 = np.array([939])
+    S2 = np.array([942])
+    S3 = np.array([948])
     print(countEvents(S1, S2, S3)) 
