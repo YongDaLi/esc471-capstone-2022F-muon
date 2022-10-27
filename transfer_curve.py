@@ -1,9 +1,9 @@
-'''
+"""
 Yong Da Li
 Thursday, September 29, 2022
 
 transfers a curve and plots it
-'''
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import pyvisa
@@ -11,7 +11,7 @@ import pyvisa
 # connect to scope
 rm = pyvisa.ResourceManager()
 print(rm.list_resources())
-hardCodedResource = 'USB0::0x0699::0x052C::B014430::INSTR'
+hardCodedResource = "USB0::0x0699::0x052C::B014430::INSTR"
 inst = rm.open_resource(hardCodedResource)
 
 # setup data output
@@ -33,25 +33,25 @@ wfmOut = wfmOut.strip(":").strip("\n").split(";")
 
 # parse parameters
 for param in wfmOut:
-	if "YMULT" in param:
-		print(param)
-		ymult = float(param.split(" ")[1])
+    if "YMULT" in param:
+        print(param)
+        ymult = float(param.split(" ")[1])
 
-	if "XINCR" in param:
-		print(param)
-		xincr = float(param.split(" ")[1])
+    if "XINCR" in param:
+        print(param)
+        xincr = float(param.split(" ")[1])
 
-	if "NR_PT" in param:
-		print(param)
-		nr_pt = float(param.split(" ")[1])
+    if "NR_PT" in param:
+        print(param)
+        nr_pt = float(param.split(" ")[1])
 
-	if "XZERO" in param:
-		print(param)
-		xzero = float(param.split(" ")[1])	
+    if "XZERO" in param:
+        print(param)
+        xzero = float(param.split(" ")[1])
 
-	if "YZERO" in param:
-		print(param)
-		yzero = float(param.split(" ")[1])
+    if "YZERO" in param:
+        print(param)
+        yzero = float(param.split(" ")[1])
 
 
 # get data
@@ -59,9 +59,8 @@ curve = inst.query("CURVE?")
 
 # clean up data
 curve = curve.strip(":CURVE ").strip("\n").split(",")
-for i in range (len(curve)):
-	curve[i] = float(curve[i])
-
+for i in range(len(curve)):
+    curve[i] = float(curve[i])
 
 
 # load previous session
@@ -74,7 +73,7 @@ for i in range (len(curve)):
 
 # construct real curves
 curve = np.array(curve) * ymult + yzero
-x = np.linspace(0,(xincr*nr_pt), int(nr_pt)) + xzero
+x = np.linspace(0, (xincr * nr_pt), int(nr_pt)) + xzero
 
 plt.plot(x, curve)
 plt.xlabel("time [s]")
