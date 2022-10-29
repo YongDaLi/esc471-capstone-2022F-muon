@@ -7,6 +7,22 @@ class Oscilloscope:
     Tektronix Series 3 Oscilloscope
     Programming Manual: https://download.tek.com/manual/3-MDO-Oscilloscope-Programmer-Manual-077149800.pdf
     """
+
+    class TriggerType(Enum):
+        Edge = "EDG"
+        Logic = "LOG"
+        PulseWidth = "PULS"
+        Bus = "BUS"
+        Video = "VID"
+
+    class TriggerMode(Enum):
+        Normal = "NORM"
+        Automatic = "AUTO"
+
+    class AcquisitionMode(Enum):
+        Peak = "PEAK"
+        Sample = "SAM"
+
     def __init__(self, oscilloscopeHardCoded):
         self.inst = None
 
@@ -16,7 +32,11 @@ class Oscilloscope:
             print("Can't connect to the oscilloscope")
             exit()
 
+        self.defaultSetup()
         self.setupAcquisitionParameters()
+
+    def defaultSetup(self):
+        self.inst.write("DEFaultsetup")
 
     def setupAcquisitionParameters(self):
         """
@@ -31,7 +51,7 @@ class Oscilloscope:
 
         # This will make sure all the commands above have run
         while True:
-            if self.inst.query("VERBOSE?") == "1":
+            if self.inst.query("VERBOSE?")[-2] == "1": # the last char is not the number
                 break
 
         wfmOut = self.inst.query("WFMOutpre?")
@@ -51,8 +71,13 @@ class Oscilloscope:
     def startAcquisition(self):
         self.inst.write("ACQ:STATE ON")
 
+    def startAcquisition(self, stopAfter):
+        if stopAfter:
+            self.inst.write("Acquire:StopAfter SEQUENCE")
+        self.inst.write("ACQ:STATE ON")
+
     def stopAcquisition(self):
-        self.inst.write("ACQ:STATE OFF")
+        self.startAcquisition(False)
 
     # Numbers must be provided in NR3 notation: 250E-3
     def setTrigger(self, type: TriggerType, channelNumber, voltage: str, mode: TriggerMode, holdoff: str, acquisitionMode: AcquisitionMode):
@@ -80,19 +105,7 @@ class Oscilloscope:
     def isAcquisitionRunning(self):
         res = self.inst.query("ACQUIRE:STATE?")
 
-        return res[-1] == "1"
+        return res[-2] == "1"
 
-    class TriggerType(Enum):
-        Edge = "EDG"
-        Logic = "LOG"
-        PulseWidth = "PULS"
-        Bus = "BUS"
-        Video = "VID"
-
-    class TriggerMode(Enum):
-        Normal = "NORM"
-        Automatic = "AUTO"
-
-    class AcquisitionMode(Enum):
-        Peak = "PEAK"
-        Sample = "SAM"
+    def close(self):
+        self.inst.close()

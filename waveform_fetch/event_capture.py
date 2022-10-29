@@ -4,7 +4,8 @@ from FileUtils import writeEventToFile, makeOutputDirectory
 import numpy as np
 from time import sleep
 
-makeOutputDirectory()
+# Create a new events directory to save the captured events
+makeEventsDirectory()
 
 # This should be potentially altered. The hardcoded address can be found
 # by checking NI Max.
@@ -25,27 +26,31 @@ oscilloscope.setTrigger(
 )
 oscilloscope.setHorizontalScale("4E-6")
 
-sleep(1000) # Waiting to make sure all the above commands have run
+sleep(1) # Waiting to make sure all the above commands have run
 
 print("Starting acquisition...")
-oscilloscope.startAcquisition()
+oscilloscope.startAcquisition(True)
 
 # Getting time
+while oscilloscope.isAcquisitionRunning():
+    continue
 t = oscilloscope.getWaveForm(1)[0]
+oscilloscope.startAcquisition(True)
 
 counter = 0
-maxCount = 100
+maxCount = 20
 while counter < maxCount:
-    if oscilloscope.isAcquisitionRunning() == False:
+    if not oscilloscope.isAcquisitionRunning():
         counter += 1
         try:
-            V = [oscilloscope.getWaveForm(i)[1] for i in range(4)]
+            V = [oscilloscope.getWaveForm(i+1)[1] for i in range(4)]
             writeEventToFile(counter, t, V)
             print("Captured event: " + str(counter) + "/" + str(maxCount))
-            oscilloscope.startAcquisition()
         except:
             print("Error encountered on event " + str(counter) + ".")
             traceback.print_exc()
             print("**********************")
+        oscilloscope.startAcquisition(True)
 
 oscilloscope.stopAcquisition()
+oscilloscope.close()
