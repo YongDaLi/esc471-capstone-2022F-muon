@@ -21,3 +21,15 @@ If the code freezes when trying to connect to the oscilloscope, turn the oscillo
 This script can only be run after the event capturer script is run; the outputs of that script are the inputs of this script.
 
 The purpose of this script is to detect the peaks in the stored waveforms and to list the detected peaks, their relative time, and their respective channel in a text file in `output.txt`. This is what Paul's code should use to determine the positron directions.
+
+## Output
+
+The file `output.txt` contains just as many lines as events stored.
+
+Each line is a series of numbers as follows:
+
+```
+c1, t1, c2, t2, c3, t3, ...
+```
+
+Which means at channel `ci` a peak was detected at `ti`. These numbers are sorted by time, so it is guaranteed that `ti < t(i+1)`.

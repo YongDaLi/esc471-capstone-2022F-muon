@@ -7,7 +7,7 @@ from scipy.signal import savgol_filter, find_peaks
 eventsDirectory = "./waveform_fetch/events"
 peaksDirectory = "./waveform_fetch/peaks"
 peakMin = -3
-peakMax = -0.2
+peakMax = -0.05
 peakThreshold = 1e-6
 
 def readFile(address):
