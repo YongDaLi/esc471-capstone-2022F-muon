@@ -1,4 +1,4 @@
 *.pkl
 waveform_fetch/events
 waveform_fetch/peaks
-waaveform_fetch/output.txt
+waveform_fetch/output.txt
