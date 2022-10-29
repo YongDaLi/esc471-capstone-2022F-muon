@@ -33,3 +33,17 @@ c1, t1, c2, t2, c3, t3, ...
 ```
 
 Which means at channel `ci` a peak was detected at `ti`. These numbers are sorted by time, so it is guaranteed that `ti < t(i+1)`.
+
+### Examples
+
+1. `1,0, 2,1e-8, 3,3e-6`
+
+The muon hits channel 1 at time 0, channel 2 at time 1e-8, an channel 3 at 3e-6. This corresponds the muon decaying inside the aluminum and the positron going downwards.
+
+2. `1,0, 2,1e-8, 2,3e-6`
+
+The muon hits channel 1 at time 0, channel 2 at time 1e-8, an channel 2 at 3e-6. This corresponds the muon decaying inside the aluminum and the positron going upwards.
+
+3. `1,0, 1,3e-6`
+
+This actually happened in one of my practice runs; the muon seemingly decayed inside the first scintillator. That is why we have two consecutive peaks in the same channel. Channel 1 has two peaks 3e-6 seconds apart (and no signals elsewhere), likely meaning a muon decay was observed inside the scintillator itself.
