@@ -2,13 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import shutil
-from scipy.signal import savgol_filter, find_peaks
 
-eventsDirectory = "./waveform_fetch/events"
-peaksDirectory = "./waveform_fetch/peaks"
-peakMin = -3
-peakMax = -0.05
-peakThreshold = 1e-6
+eventsDirectory = "./events"
+peaksDirectory = "./peaks"
+peakMin = [-3, -3, -3, -3] # Different for different channels
+peakMax = [-0.10, -0.03, -0.1, -0.1] # Different for different channels
+peakThreshold = [1e-6, 1e-6, 1e-6, 1e-6] # Different for different channels
 
 def readFile(address):
     file = open(eventsDirectory + "/" + address, "r")
@@ -24,18 +23,18 @@ def readFile(address):
 
     return [t, V]
 
-def findPeaks(t, V):
+def findPeaks(channel, t, V): # Returns the avg index, not time
     """
     Returns the indices of the peaks
     """
     dt = t[1] - t[0]
-    peakSci = find_peaks(V, height=[peakMin, peakMax])[0]
+    peakSci = [i for i in range(len(V)) if V[i] > peakMin[channel] and V[i] < peakMax[channel]]
     peaks = []
     ll = []
     for p in peakSci:
         if len(ll) == 0:
             ll += [p]
-        elif (p - ll[0]) * dt < peakThreshold:
+        elif (p - ll[0]) * dt < peakThreshold[channel]:
             ll += [p]
         else:
             peaks += [int(sum(ll) / len(ll))]
@@ -71,7 +70,7 @@ for (i, address) in enumerate(eventFiles):
         n = j // 2
         m = j % 2
 
-        peaks = findPeaks(t, V[j])
+        peaks = findPeaks(j, t, V[j])
 
         ax[n, m].set_title("Channel " + str(j+1) + "; " + str(len(peaks)) + " Peaks")
         ax[n, m].plot(t, V[j], c=(0,0,0), linewidth=0.5)
@@ -80,10 +79,11 @@ for (i, address) in enumerate(eventFiles):
             info[-1] += [(j+1, t[p])]
 
     plt.savefig(peaksDirectory + "/" + address.split('.')[0] + ".jpg")
+    plt.close(fig)
 
 sinfo = [sorted(d, key=lambda r : r[1]) for d in info]
 lines = [",".join([str(l[0]) + "," + str(l[1]) for l in d]) for d in sinfo]
 
-outputFile = open("./waveform_fetch/output.txt", "w")
+outputFile = open("./output.txt", "w")
 for line in lines:
     outputFile.write(line + "\n")

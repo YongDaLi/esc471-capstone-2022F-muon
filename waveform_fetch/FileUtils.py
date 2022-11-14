@@ -14,12 +14,12 @@ def writeEventToFile(counter, t, V):
         V: A list of size 4; each item is another list containing the voltages
            measured from the ith channel in V.
     """
-    file = open("./waveform_fetch/events/event" + str(counter) + ".txt", "w")
+    file = open("./events/event" + str(counter) + ".txt", "w")
     for i in range(len(t)):
         file.write(str(t[i]) + "," + str(V[0][i]) + "," + str(V[1][i]) + "," + str(V[2][i]) + "," + str(V[3][i]) + "\n")
     file.close()
 
 def makeEventsDirectory():
-    if os.path.exists("./waveform_fetch/events"):
-        shutil.rmtree("./waveform_fetch/events")
-    os.makedirs("./waveform_fetch/events")
+    if os.path.exists("./events"):
+        shutil.rmtree("./events")
+    os.makedirs("./events")

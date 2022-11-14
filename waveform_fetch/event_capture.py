@@ -1,6 +1,6 @@
 import traceback
 from Oscilloscope import Oscilloscope
-from FileUtils import writeEventToFile, makeOutputDirectory
+from FileUtils import writeEventToFile, makeEventsDirectory
 import numpy as np
 from time import sleep
 
@@ -19,12 +19,12 @@ oscilloscope.stopAcquisition()
 oscilloscope.setTrigger(
     Oscilloscope.TriggerType.Edge,
     1,
-    "-250E-3",
+    "-120E-3",
     Oscilloscope.TriggerMode.Normal,
     "20E-9",
     Oscilloscope.AcquisitionMode.Peak
 )
-oscilloscope.setHorizontalScale("4E-6")
+oscilloscope.setHorizontalScale("2E-6")
 
 sleep(1) # Waiting to make sure all the above commands have run
 
@@ -38,7 +38,7 @@ t = oscilloscope.getWaveForm(1)[0]
 oscilloscope.startAcquisition(True)
 
 counter = 0
-maxCount = 20
+maxCount = 200
 while counter < maxCount:
     if not oscilloscope.isAcquisitionRunning():
         counter += 1
