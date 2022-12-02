@@ -43,9 +43,10 @@ class Oscilloscope:
         This setups up the required prerequisites for reading waveforms from the scope.
         """
         self.inst.write("DATa:STARt 1")
-        self.inst.write("DATa:STOP 10000")
+        self.inst.write("DATa:STOP 5000")
         self.inst.write("DATa:ENCd ASCIi")
         self.inst.write("DATa:WIDth 1")
+        self.inst.write("HOR:POS 5")
         self.inst.write("HEADer 1")
         self.inst.write("VERBose 1")
 

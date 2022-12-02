@@ -38,12 +38,12 @@ t = oscilloscope.getWaveForm(1)[0]
 oscilloscope.startAcquisition(True)
 
 counter = 0
-maxCount = 200
+maxCount = 10
 while counter < maxCount:
     if not oscilloscope.isAcquisitionRunning():
         counter += 1
         try:
-            V = [oscilloscope.getWaveForm(i+1)[1] for i in range(4)]
+            V = [oscilloscope.getWaveForm(i+1)[1] for i in range(2)]
             writeEventToFile(counter, t, V)
             print("Captured event: " + str(counter) + "/" + str(maxCount))
         except:

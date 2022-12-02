@@ -1,7 +1,7 @@
 import os
 import shutil
 
-def writeEventToFile(counter, t, V):
+def writeEventToFile(address, t, V):
     """
     This function stores the information of a measured event into a file
     with name output/event<i>.txt in the format
@@ -14,12 +14,26 @@ def writeEventToFile(counter, t, V):
         V: A list of size 4; each item is another list containing the voltages
            measured from the ith channel in V.
     """
-    file = open("./events/event" + str(counter) + ".txt", "w")
+    file = open(address, "w")
     for i in range(len(t)):
-        file.write(str(t[i]) + "," + str(V[0][i]) + "," + str(V[1][i]) + "," + str(V[2][i]) + "," + str(V[3][i]) + "\n")
+        file.write(str(t[i]) + "," + str(V[0][i]) + "," + str(V[1][i]) + "\n")
     file.close()
 
 def makeEventsDirectory():
     if os.path.exists("./events"):
         shutil.rmtree("./events")
     os.makedirs("./events")
+
+def readFile(address):
+    file = open(address, "r")
+    lines = file.readlines()
+
+    t = []
+    V = [[] for i in range(2)]
+    for line in lines:
+        s = line.split(',')
+        t += [float(s[0])]
+        for j in range(2):
+            V[j] += [float(s[j + 1])]
+
+    return [t, V]
